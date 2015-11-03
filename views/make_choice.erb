@@ -1,0 +1,12 @@
+<% if $game.mode == :single_player %>
+<p>Make your choice:</p>
+<% end %>
+
+<% if $game.mode == :two_player %>
+  <% name = ($game.player1_chosen? ? $game.player2_name : $game.player1_name) %>
+  <p>Make your choice <%= name %>:</p>
+<% end %>
+
+<form action='/set-choice' method='post'>
+  <button type='submit' name='choice' value='rock'>Rock</button>
+</form>

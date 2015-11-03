@@ -6,12 +6,12 @@ describe Game do
   context '#set_mode' do
     it 'sets mode to :single_player' do
       game.set_mode(:single_player)
-      expect(game.mode).to eq (:single_player)
+      expect(game.mode).to eq(:single_player)
     end
 
     it 'sets mode to :two_player' do
       game.set_mode(:two_player)
-      expect(game.mode).to eq (:two_player)
+      expect(game.mode).to eq(:two_player)
     end
 
     it 'raises error if argument is not :single_player or :two_player' do
@@ -22,17 +22,31 @@ describe Game do
   context '#set_names' do
     it 'sets player one\'s name' do
       game.set_names(:Player_one, nil)
-      expect(game.player1_name).to be (:Player_one)
+      expect(game.player1_name).to be(:Player_one)
     end
 
     it 'sets player two\'s name' do
       game.set_names(:Player_one, :Player_two)
-      expect(game.player2_name).to be (:Player_two)
+      expect(game.player2_name).to be(:Player_two)
     end
 
     it 'sets player two\'s name to "Computer" by default' do
       game.set_names(:Player_one, nil)
-      expect(game.player2_name).to eq ('Computer')
+      expect(game.player2_name).to eq('Computer')
+    end
+  end
+
+  context '#set_choice' do
+    it 'sets player 1\'s choice' do
+      game.set_player_choice(:rock)
+      expect(game.player1_choice).to be(:rock)
+    end
+  end
+
+  context '#set_computer_choice' do
+    it 'sets player 2\'s choice' do
+      game.set_computer_choice
+      expect(Game::CHOICES).to include(game.player2_choice)
     end
   end
 

@@ -31,5 +31,21 @@ class Rps < Sinatra::Base
     erb :start_game
   end
 
+  get '/make-choice' do
+    erb :make_choice
+  end
+
+  post '/set-choice' do
+    choice = params[:choice].to_sym
+    $game.set_computer_choice if $game.mode == :single_player
+    $game.set_player_choice(choice)
+    redirect '/game-result' if $game.over?
+    redirect '/make-choice'
+  end
+
+  get '/game-result' do
+    erb :game_result
+  end
+
   run! if app_file == $0
 end
