@@ -1,6 +1,16 @@
 <% if $game.mode == :single_player %>
 <p>Single player mode selected.</p>
+<form action='/set-names' method='post'>
+  <input type='text' name='player1_name' value='enter player name' />
+  <input type='submit' value='Submit' />
+</form>
 <% end %>
+
 <% if $game.mode == :two_player %>
 <p>Two player mode selected.</p>
+<form action='/set-names' method='post'>
+  <input type='text' name='player1_name' value='enter player 1 name' />
+  <input type='text' name='player2_name' value='enter player 2 name' />
+  <input type='submit' value='Submit' />
+</form>
 <% end %>

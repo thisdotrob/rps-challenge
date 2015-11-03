@@ -20,5 +20,16 @@ class Rps < Sinatra::Base
     erb :enter_names
   end
 
+  post '/set-names' do
+    player1_name = params[:player1_name]
+    player2_name = params[:player2_name]    # nil if single player mode
+    $game.set_names(player1_name, player2_name)
+    redirect '/start-game'
+  end
+
+  get '/start-game' do
+    erb :start_game
+  end
+
   run! if app_file == $0
 end
