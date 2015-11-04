@@ -90,3 +90,17 @@ feature 'Game result' do
     expect(page).to have_content 'Player_two\'s choice: rock'
   end
 end
+
+feature 'Outcome' do
+  scenario 'displays a win' do
+    visit('/')
+    click_button 'Two player'
+    fill_in :player1_name, with: 'Player_one'
+    fill_in :player2_name, with: 'Player_two'
+    click_button 'Submit'
+    click_button 'Play'
+    click_button 'rock'
+    click_button 'paper'
+    expect(page).to have_content 'Player_two wins!'
+  end
+end
