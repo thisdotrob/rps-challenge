@@ -9,6 +9,7 @@ class Game
   attr_reader :mode, :player1_name, :player2_name, :player1_choice, :player2_choice
 
   def set_mode(mode)
+    mode = mode.to_sym
     raise SET_MODE_ERROR unless MODES.include?(mode)
     @mode = mode
   end
@@ -38,8 +39,21 @@ class Game
 
   def winner
     return DRAW_MSG if player1_choice == player2_choice
+    player2_has_losing_choice? ? player1_name : player2_name
+  end
+
+  def single_player?
+    @mode == :single_player
+  end
+
+  private
+
+  def player2_has_losing_choice?
+    losing_choices.include?(player2_choice)
+  end
+
+  def losing_choices
     player1_index = CHOICES.index(player1_choice)
-    losing_choices = [CHOICES[player1_index-1], CHOICES[player1_index-3]]
-    losing_choices.include?(player2_choice) ? player1_name : player2_name
+    [CHOICES[player1_index-1], CHOICES[player1_index-3]]
   end
 end

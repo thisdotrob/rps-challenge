@@ -1,8 +1,6 @@
-<% if $game.mode == :single_player %>
+<% if $game.single_player? %>
 <p>Make your choice:</p>
-<% end %>
-
-<% if $game.mode == :two_player %>
+<% else %>
   <% name = ($game.player1_chosen? ? $game.player2_name : $game.player1_name) %>
   <p>Make your choice <%= name %>:</p>
 <% end %>

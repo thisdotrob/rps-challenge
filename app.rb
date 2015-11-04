@@ -12,7 +12,7 @@ class Rps < Sinatra::Base
 
   post '/set-mode' do
     $game = Game.new
-    $game.set_mode(params[:mode].to_sym)
+    $game.set_mode(params[:mode])
     redirect '/enter-names'
   end
 
