@@ -1,4 +1,4 @@
-<% if $game.single_player? %>
+<% if @game.single_player? %>
 <p>Single player mode selected.</p>
 <form action='/set-names' method='post'>
   <input type='text' name='player1_name' value='enter player name' />
