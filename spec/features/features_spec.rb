@@ -103,4 +103,27 @@ feature 'Outcome' do
     click_button 'paper'
     expect(page).to have_content 'Player_two wins!'
   end
+
+  scenario 'displays a draw' do
+    visit('/')
+    click_button 'Two player'
+    fill_in :player1_name, with: 'Player_one'
+    fill_in :player2_name, with: 'Player_two'
+    click_button 'Submit'
+    click_button 'Play'
+    click_button 'scissors'
+    click_button 'scissors'
+    expect(page).to have_content 'Draw!'
+  end
+
+  scenario 'displays a loss' do
+    allow(Game::CHOICES).to receive(:sample) { :lizard }
+    visit('/')
+    click_button 'Single player'
+    fill_in :player1_name, with: 'Player_one'
+    click_button 'Submit'
+    click_button 'Play'
+    click_button 'spock'
+    expect(page).to have_content 'Computer wins!'
+  end
 end
