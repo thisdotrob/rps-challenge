@@ -113,7 +113,7 @@ feature 'Outcome' do
     click_button 'Play'
     click_button 'scissors'
     click_button 'scissors'
-    expect(page).to have_content 'Draw!'
+    expect(page).to have_content 'Nobody wins!'
   end
 
   scenario 'displays a loss' do

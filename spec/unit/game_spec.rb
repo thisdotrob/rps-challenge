@@ -1,32 +1,29 @@
 require 'game'
 
 describe Game do
-  subject(:game){ Game.new(player1, player2) }
+  subject(:game){ Game.new(:mode, players) }
 
   let(:player1){ double(:player1, set_name: nil) }
   let(:player2){ double(:player2, set_name: nil) }
+  let(:players){ [player1, player2] }
 
   context '#initialize' do
     it 'initializes two players' do
-      expect(game.players).to eq [player1, player2]
+      expect(game.players).to eq (players)
     end
-  end
-
-  context '#set_mode' do
-    it 'sets mode to :single_player' do
-      game.set_mode(:single_player)
-      expect(game.mode).to be(:single_player)
+    it 'defaults to two player mode' do
+      expect(game).to_not be_single_player
     end
-    it 'sets mode to :two_player' do
-      game.set_mode(:two_player)
-      expect(game.mode).to be(:two_player)
-    end
-    it 'raises error if argument is not :single_player or :two_player' do
-      expect{ game.set_mode(:argument) }.to raise_error Game::SET_MODE_ERROR
+    it 'can set single player mode' do
+      expect(Game.new(:single_player,players)).to be_single_player
     end
   end
 
   context '#set_names' do
+    it 'sets player two\'s name to "Computer" by default' do
+      expect(player2).to receive(:set_name).with('Computer')
+      game.set_names(:name, nil)
+    end
     it 'sets player 1\'s name' do
       expect(player1).to receive(:set_name)
       game.set_names(:name, nil)
@@ -34,10 +31,6 @@ describe Game do
     it 'sets player 2\'s name' do
       expect(player2).to receive(:set_name)
       game.set_names(nil, :name)
-    end
-    it 'sets player two\'s name to "Computer" by default' do
-      expect(player2).to receive(:set_name).with('Computer')
-      game.set_names(:name, nil)
     end
   end
 

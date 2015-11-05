@@ -14,8 +14,7 @@ class Rps < Sinatra::Base
   end
 
   post '/set-mode' do
-    game = Game.new
-    game.set_mode(params[:mode])
+    game = Game.new(params[:mode].to_sym)
     session[:game] = game
     redirect '/enter-names'
   end
@@ -26,10 +25,8 @@ class Rps < Sinatra::Base
   end
 
   post '/set-names' do
-    player1_name = params[:player1_name]
-    player2_name = params[:player2_name]    # nil if single player mode
     game = session[:game]
-    game.set_names(player1_name, player2_name)
+    game.set_names(params[:player1_name], params[:player2_name])
     redirect '/start-game'
   end
 

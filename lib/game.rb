@@ -10,22 +10,19 @@ class Game
   def_delegator :player1, :choice, :player1_choice
   def_delegator :player2, :choice, :player2_choice
 
-  MODES = [:single_player,:two_player]
   CHOICES = [:rock, :paper, :scissors, :spock, :lizard]
-  SET_MODE_ERROR = "argument should be :#{MODES[0]} or :#{MODES[1]}"
   SET_CHOICE_ERROR = "choice supplied is not one one of valid options"
-  DRAW_MSG = "Draw!"
+  DRAW_MSG = "Nobody"
 
-  attr_reader :mode, :players
+  attr_reader :players
 
-  def initialize(player1 = Player.new, player2 = Player.new)
-    @players = [player1, player2]
+  def initialize(mode, players = [Player.new, Player.new])
+    @single_player = mode == :single_player
+    @players = players
   end
 
-  def set_mode(mode)
-    mode = mode.to_sym
-    raise SET_MODE_ERROR unless MODES.include?(mode)
-    @mode = mode
+  def single_player?
+    single_player
   end
 
   def set_names(player1_name, player2_name)
@@ -52,11 +49,9 @@ class Game
     player2_has_losing_choice? ? player1.name : player2.name
   end
 
-  def single_player?
-    mode == :single_player
-  end
-
   private
+
+  attr_reader :single_player
 
   def player1
     players.first
