@@ -1,53 +1,71 @@
 require 'game'
 
 describe Game do
-  subject(:game){ Game.new }
+  subject(:game){ Game.new(player1, player2) }
+
+  let(:player1){ double(:player1, set_name: nil) }
+  let(:player2){ double(:player2, set_name: nil) }
+
+  context '#initialize' do
+    it 'initializes two players' do
+      expect(game.players).to eq [player1, player2]
+    end
+  end
 
   context '#set_mode' do
     it 'sets mode to :single_player' do
       game.set_mode(:single_player)
-      expect(game.mode).to eq(:single_player)
+      expect(game.mode).to be(:single_player)
     end
-
     it 'sets mode to :two_player' do
       game.set_mode(:two_player)
-      expect(game.mode).to eq(:two_player)
+      expect(game.mode).to be(:two_player)
     end
-
     it 'raises error if argument is not :single_player or :two_player' do
       expect{ game.set_mode(:argument) }.to raise_error Game::SET_MODE_ERROR
     end
   end
 
   context '#set_names' do
-    it 'sets player one\'s name' do
-      game.set_names(:Player_one, nil)
-      expect(game.player1_name).to be(:Player_one)
+    it 'sets player 1\'s name' do
+      expect(player1).to receive(:set_name)
+      game.set_names(:name, nil)
     end
-
-    it 'sets player two\'s name' do
-      game.set_names(:Player_one, :Player_two)
-      expect(game.player2_name).to be(:Player_two)
+    it 'sets player 2\'s name' do
+      expect(player2).to receive(:set_name)
+      game.set_names(nil, :name)
     end
-
     it 'sets player two\'s name to "Computer" by default' do
-      game.set_names(:Player_one, nil)
-      expect(game.player2_name).to eq('Computer')
+      expect(player2).to receive(:set_name).with('Computer')
+      game.set_names(:name, nil)
+    end
+  end
+
+  context '#player1_name' do
+    it 'gets the first player\'s name' do
+      expect(player1).to receive(:name)
+      game.player1_name
+    end
+  end
+
+  context '#player2_name' do
+    it 'gets the second player\'s name' do
+      expect(player2).to receive(:name)
+      game.player2_name
     end
   end
 
   context '#set_choice' do
     it 'sets player 1\'s choice' do
+      allow(player1).to receive(:chosen?) {false}
+      expect(player1).to receive(:set_choice).with(:rock)
       game.set_player_choice(:rock)
-      expect(game.player1_choice).to be(:rock)
     end
-
-    it 'sets player2\'s choice' do
-      game.set_player_choice(:rock)
+    it 'sets player 2\'s choice' do
+      allow(player1).to receive(:chosen?) {true}
+      expect(player2).to receive(:set_choice).with(:paper)
       game.set_player_choice(:paper)
-      expect(game.player2_choice).to be(:paper)
     end
-
     it 'raises error if choice is invalid' do
       expect{ game.set_player_choice(:fish) }.to raise_error Game::SET_CHOICE_ERROR
     end
@@ -55,141 +73,23 @@ describe Game do
 
   context '#set_computer_choice' do
     it 'sets player 2\'s choice' do
+      allow(Game::CHOICES).to receive(:sample) { :paper }
+      expect(player2).to receive(:set_choice).with(:paper)
       game.set_computer_choice
-      expect(Game::CHOICES).to include(game.player2_choice)
     end
   end
 
-  context '#winner (player1)' do
-    before :each do
-      game.set_names(:player_one, :player_two)
+  context '#over?' do
+    it 'returns true if both player 1 and player 2\'s choices are set' do
+      allow(player1).to receive(:chosen?) {true}
+      allow(player2).to receive(:chosen?) {true}
+      expect(game).to be_over
     end
-    it 'sets winner for player1: rock, player2: rock' do
-      game.set_player_choice(:rock)
-      game.set_player_choice(:rock)
-      expect(game.winner).to eq 'Draw!'
-    end
-    it 'sets winner for player1: rock, player2: paper' do
-      game.set_player_choice(:rock)
-      game.set_player_choice(:paper)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: rock, player2: scissors' do
-      game.set_player_choice(:rock)
-      game.set_player_choice(:scissors)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: rock, player2: lizard' do
-      game.set_player_choice(:rock)
-      game.set_player_choice(:lizard)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: rock, player2: spock' do
-      game.set_player_choice(:rock)
-      game.set_player_choice(:spock)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: paper, player2: rock' do
-      game.set_player_choice(:paper)
-      game.set_player_choice(:rock)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: paper, player2: paper' do
-      game.set_player_choice(:paper)
-      game.set_player_choice(:paper)
-      expect(game.winner).to eq 'Draw!'
-    end
-    it 'sets winner for player1: paper, player2: scissors' do
-      game.set_player_choice(:paper)
-      game.set_player_choice(:scissors)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: paper, player2: lizard' do
-      game.set_player_choice(:paper)
-      game.set_player_choice(:lizard)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: paper, player2: spock' do
-      game.set_player_choice(:paper)
-      game.set_player_choice(:spock)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: scissors, player2: rock' do
-      game.set_player_choice(:scissors)
-      game.set_player_choice(:rock)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: scissors, player2: paper' do
-      game.set_player_choice(:scissors)
-      game.set_player_choice(:paper)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: scissors, player2: scissors' do
-      game.set_player_choice(:scissors)
-      game.set_player_choice(:scissors)
-      expect(game.winner).to eq 'Draw!'
-    end
-    it 'sets winner for player1: scissors, player2: lizard' do
-      game.set_player_choice(:scissors)
-      game.set_player_choice(:lizard)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: scissors, player2: spock' do
-      game.set_player_choice(:scissors)
-      game.set_player_choice(:spock)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: lizard, player2: rock' do
-      game.set_player_choice(:lizard)
-      game.set_player_choice(:rock)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: lizard, player2: paper' do
-      game.set_player_choice(:lizard)
-      game.set_player_choice(:paper)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: lizard, player2: scissors' do
-      game.set_player_choice(:lizard)
-      game.set_player_choice(:scissors)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: lizard, player2: lizard' do
-      game.set_player_choice(:lizard)
-      game.set_player_choice(:lizard)
-      expect(game.winner).to eq 'Draw!'
-    end
-    it 'sets winner for player1: lizard, player2: spock' do
-      game.set_player_choice(:lizard)
-      game.set_player_choice(:spock)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: spock, player2: rock' do
-      game.set_player_choice(:spock)
-      game.set_player_choice(:rock)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: spock, player2: paper' do
-      game.set_player_choice(:spock)
-      game.set_player_choice(:paper)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: spock, player2: scissors' do
-      game.set_player_choice(:spock)
-      game.set_player_choice(:scissors)
-      expect(game.winner).to eq :player_one
-    end
-    it 'sets winner for player1: spock, player2: lizard' do
-      game.set_player_choice(:spock)
-      game.set_player_choice(:lizard)
-      expect(game.winner).to eq :player_two
-    end
-    it 'sets winner for player1: spock, player2: spock' do
-      game.set_player_choice(:spock)
-      game.set_player_choice(:spock)
-      expect(game.winner).to eq 'Draw!'
+    it 'returns false if either player\'s choice is unset' do
+      allow(player1).to receive(:chosen?) {true}
+      allow(player2).to receive(:chosen?) {false}
+      expect(game).to_not be_over
     end
   end
-
 
 end

@@ -45,7 +45,7 @@ class Rps < Sinatra::Base
 
   post '/set-choice' do
     game = session[:game]
-    game.set_computer_choice if game.mode == :single_player
+    game.set_computer_choice if game.single_player?
     game.set_player_choice(params[:choice].to_sym)
     redirect '/game-result' if game.over?
     redirect '/make-choice'
